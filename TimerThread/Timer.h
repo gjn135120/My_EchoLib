@@ -10,7 +10,7 @@ public:
 
 	typedef std::function<void()> TimerCallback;
 
-	Timer(int val, int interval, TimerCallback cb);
+	Timer(double val, double interval, TimerCallback cb);
 	~Timer();
 
 	void start();
@@ -19,8 +19,8 @@ public:
 private:
 
 	int _timerfd;
-	int _val;
-	int _interval;
+	double _val;
+	double _interval;
 	TimerCallback _callback;
 	bool _isStart;
 };

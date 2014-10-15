@@ -9,7 +9,7 @@ class TimerThread : boost::noncopyable
 {
 public:
 	typedef std::function<void()> Callback;
-	TimerThread(int val, int interval, Callback cb);
+	TimerThread(double val, double interval, Callback cb);
 
 	void start();
 	void stop();

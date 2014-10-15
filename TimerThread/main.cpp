@@ -1,7 +1,8 @@
 #include "TimerThread.h"
+#include "nano_sleep.hpp"
 #include <stdio.h>
 #include <unistd.h>
-
+using namespace MyLib;
 void foo()
 {
 	printf("foo\n");
@@ -9,9 +10,9 @@ void foo()
 
 int main(int argc, const char *argv[])
 {
-	TimerThread a(3, 1, &foo);
+	TimerThread a(0.5, 0.5, &foo);
 	a.start();
-	sleep(10);
+	MyLib::nano_sleep(2);
 	a.stop();
 	return 0;
 }

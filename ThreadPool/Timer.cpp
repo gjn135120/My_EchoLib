@@ -15,6 +15,8 @@
 		}while(0)
 namespace
 {
+
+	const long SECONDS = 1000 * 1000 * 1000;
 	int createTimer()
 	{
 		int timerfd = ::timerfd_create(CLOCK_REALTIME, 0);
@@ -24,12 +26,14 @@ namespace
 		return timerfd;
 	}
 
-	void setTimer(int timerfd, int val, int interval)
+	void setTimer(int timerfd, double val, double interval)
 	{
 		struct itimerspec t;
 		memset(&t, 0, sizeof t);
-		t.it_value.tv_sec = val;
-		t.it_interval.tv_sec = interval;
+		t.it_value.tv_sec = (time_t)val;
+		t.it_value.tv_nsec = (val - (time_t)val) * SECONDS;
+		t.it_interval.tv_sec = (time_t)interval;
+		t.it_interval.tv_nsec = (interval - (time_t)interval) * SECONDS;
 
 		if(::timerfd_settime(timerfd, 0, &t, NULL) == -1)
 			ERR_EXIT("settime");
@@ -48,7 +52,7 @@ namespace
 	}
 
 }
-Timer::Timer(int val, int interval, TimerCallback cb)
+Timer::Timer(double val, double interval, TimerCallback cb)
 	:_timerfd(createTimer()),
 	 _val(val),
 	 _interval(interval),

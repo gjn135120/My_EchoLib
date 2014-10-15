@@ -23,8 +23,11 @@ void ThreadPool::addTask(Task task)
 	if(!_isStart)
 		return;
 	MutexLockGuard lock(_mutex);
-	while(_queue.size() >= _queueSize)
+	while(_queue.size() >= _queueSize && _isStart)
 		_empty.wait();
+
+	if(!_isStart)
+		return;
 
 	_queue.push(std::move(task));
 	_full.notify();
@@ -32,14 +35,12 @@ void ThreadPool::addTask(Task task)
 
 ThreadPool::Task ThreadPool::getTask()
 {
-	if(!_isStart)
-		return Task();
-
 	MutexLockGuard lock(_mutex);
 	while(_queue.empty() && _isStart)
 		_full.wait();
 
-
+	if(!_isStart)
+		return Task();
 
 	assert(!_queue.empty());
 	Task task = _queue.front();
@@ -60,8 +61,6 @@ void ThreadPool::runInThread()
 }
 void ThreadPool::start()
 {
-	if(_isStart)
-		return ;
 	_isStart = true;
 
 	for(size_t i = 0; i != _poolSize; ++ i)
@@ -78,14 +77,18 @@ void ThreadPool::stop()
 	{
 		MutexLockGuard lock(_mutex);
 		_isStart = false;
-		_full.notifyAll();
+		while(!_queue.empty())
+		_queue.pop();
+
 	}
+
+	_full.notifyAll();
+	_empty.notifyAll();
 
 	for(size_t i = 0; i != _poolSize; ++ i)
 		_threads[i]->join();
 
-	while(!_queue.empty())
-		_queue.pop();
+
 
 	_threads.clear();
 }

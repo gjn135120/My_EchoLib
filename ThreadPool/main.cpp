@@ -17,7 +17,7 @@ void stopPool(ThreadPool *a)
 int main(int argc, const char *argv[])
 {
 	ThreadPool b(120, 4);
-	TimerThread a(4, 0, std::bind(&stopPool, &b));
+	TimerThread a(1, 0.5, std::bind(&stopPool, &b));
 	b.start();
 	a.start();
 	while(b.isRunning())
