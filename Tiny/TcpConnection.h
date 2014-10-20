@@ -46,10 +46,10 @@ public:
 	std::string recv();
 	void send(const std::string &s);
 
-	const InetAddr &get_localAddr() const
+	const InetAddr &get_local_addr() const
 	{ return _localAddr; }
 
-	const InetAddr &get_perrAddr() const
+	const InetAddr &get_peer_addr() const
 	{ return _peerAddr; }
 
 	std::string toString() const;

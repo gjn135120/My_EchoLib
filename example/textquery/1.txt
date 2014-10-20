@@ -1,0 +1,6 @@
+hello  world   how  are  you
+foo bar
+hello
+how
+foo
+bar
